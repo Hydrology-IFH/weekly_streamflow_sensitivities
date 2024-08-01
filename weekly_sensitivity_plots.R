@@ -794,7 +794,7 @@ title_legend_P <- expression(b[P]*" [-]")}
 if(abs == 2){ maxt <- 25
 maxp <- 30
 title_legend_T <- expression(S[T]*" [%/K]")
-title_legend_P <- expression(b[P]*" [%/(mm/d)]")}
+title_legend_P <- expression(S[P]*" [%/(mm/d)]")}
 
 palette(rb)
 img <- T_elev
