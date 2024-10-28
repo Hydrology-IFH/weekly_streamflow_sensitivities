@@ -62,6 +62,8 @@ library(car)
 out_T <- read.table(file="D:/R/Climate_sensitivity/Weekly_Sensitivity_to_T.txt")
 out_P <- read.table(file="D:/R/Climate_sensitivity/Weekly_Sensitivity_to_P.txt")
 out_Q <- read.table(file="D:/R/Climate_sensitivity/Weekly_Sensitivity_to_Q.txt")
+out_isotherm <- read.table(file="D:/R/Climate_sensitivity/0deg_isotherm_regime.txt")
+
 
 #path <- "/Users/mweiler/Markus/Research Projects/KHR/Abflussdaten/"
 
@@ -94,7 +96,7 @@ out_P.var <- out_P[,(in1+2*ws):(in1+3*ws-1)]
 out_Q.p <- out_Q[,in1:(in1+ws-1)]
 out_Q.coeff <- out_Q[,(in1+ws):(in1+2*ws-1)]
 out_Q.var <- out_Q[,(in1+2*ws):(in1+3*ws-1)]
-a0 <- out_Q[,(in1+3*ws):(in1+4*ws-1)]
+#a0 <- out_Q[,(in1+3*ws):(in1+4*ws-1)]
 
 
 tcoef <- matrix(NA, nrow=nr, ncol=52)
@@ -111,6 +113,8 @@ qcoef <- matrix(NA, nrow=nr, ncol=52)
 # - some other minor changes
 
 #col <- (hsv(h = seq(.175,.6,length.out=nr), v = seq(1,1,length.out=nr), s=seq(0.2,1,length.out=nr))) 
+library("RColorBrewer")
+#col <- colorRampPalette(brewer.pal(n=9, name='YlGnBu'))(30)
 col <- terrain.colors(30, alpha = 1)
 palette(col)
 
@@ -119,6 +123,7 @@ xx <- seq(1,52)*7-3
 xtick = c(0,31,59,90,120,151,181,212,243,273,304,334,365)
 xtlab = c("J","F","M","A","M","J","J","A","S","O","N","D",NA)
 zero <- rep(0, length(xx))
+
 
 pdf(file="D:/R/Climate_sensitivity/Figure 1.pdf",width=8, height=9)
 
@@ -234,7 +239,7 @@ axis(side = 1, at = xtick, labels = rep("",13))
 abline(0,0)
 for (i in 1:nr) {points(xx,pcoef[i,], typ="l",col=col[ceiling((height[i]-500)*.01)], lwd = 2)}
 # legend(183,ylim1[2], seq(500,3000,length.out=6),col=col, fill=seq(1,25,length.out=6), horiz=TRUE, title="Elevation [m a.s.l.]", bty="n", xjust=0.5, cex=0.8)
-legend(1,ylim1[2], seq(500,3000,length.out=11),col=col, fill=seq(1,25,length.out=11), horiz=F, title="Elevation [m a.s.l.]", bty="n", xjust=-3.5, cex=0.7)
+legend(1,ylim1[2], seq(500,3000,length.out=11),col=col, fill=seq(1,25,length.out=11), horiz=F, title="Elevation [m a.s.l.]", bty="n", xjust=-2.5, cex=0.7)
 
 ### explained variance
 for (i in 1:nr) {tcoef[i,] <- ma.filtc(as.numeric(out_Q.var[i,]),movavg)}  
@@ -393,7 +398,7 @@ for (i in 1:ws)
 
 
 ####################################
-# make plots (Figure 2) combining the infos for the regression with elevation and glacier coverage
+# make plots (Figure S2) combining the infos for the regression with elevation and glacier coverage
 
 # changelog:
 # - abs. and rel. plotted separately and merged later
@@ -459,7 +464,7 @@ dev.off()
 
 
 
-# plot for Figure 3
+# plot for Figure 2
 
 # changelog:
 # - changed the grey shading to grey points
@@ -485,7 +490,8 @@ abs <- 1
 
 pdf(file="D:/R/Climate_sensitivity/Figure 2.pdf",width=8, height=7)
 
-par( mfrow = c(2,2),mar=c(c(2, 4, 1, 1) + 0.1), cex=0.8)
+#par( mfrow = c(2,2),mar=c(c(2, 4, 1, 1) + 0.1), cex=0.8)
+par(mfrow = c(2, 2), mar = c(2, 4, 1, 1) + 0.1, oma = c(0, 0, 0, 3), cex = 0.8)
 
 if(abs == 1){ maxt <- 1.5
 maxp <- 1.0
@@ -511,12 +517,18 @@ sigmod <- which(mod_T$elev_p < 0.05)
 points(xx[sigmod],zero[sigmod]+elim1[2]*0.98, pch=15, col="gray")
 #filled.contour(xx, elev, img,levels=seq(-maxt,maxt,length.out=21),ylim=elim1, xlim=c(0,365),col=rb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n")
 abline(elim1[2]*0.96,0)
+yy_iso <- out_isotherm$isotherm.1[1:52]
+yy_iso[yy_iso>3550] = NA
+yy_iso2 <- out_isotherm$isotherm.2[1:52]
+lines(xx, yy_iso, col="grey50", lwd=2, lty=5)
+lines(xx, yy_iso2, col="grey50", lwd=2, lty=2)
 
 palette(wb)
 img <- P_elev
 temp <- which(img > maxp)
 if(length(temp) > 0){img[temp] <- maxp}
-image(xx, elev, img, zlim=c(0,maxp), ylim=elim1, xlim=c(0,365),col=wb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n" )
+#image(xx, elev, img, zlim=c(0,maxp), ylim=elim1, xlim=c(0,365),col=wb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n" )
+image(xx, elev, img, zlim=c(0, maxp), ylim=elim1, xlim=c(0, 365), col=wb, xlab="", ylab="", xaxt="n", yaxt="n")
 axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 legend(1,elim1[2]*0.95, seq(0,maxp,length.out=6),col=wb, fill=seq(1,11,length.out=6), horiz=FALSE, title=title_legend_P, bty="n", xjust=0, cex=0.7)
@@ -525,6 +537,15 @@ legend(1,elim1[2]*0.95, seq(0,maxp,length.out=6),col=wb, fill=seq(1,11,length.ou
 sigmod <- which(mod_P$elev_p < 0.05)
 points(xx[sigmod],zero[sigmod]+elim1[2]*0.98, pch=15, col="gray")
 abline(elim1[2]*0.96,0)
+lines(xx, yy_iso, col="grey50", lwd=2, lty=5)
+lines(xx, yy_iso2, col="grey50", lwd=2, lty=2)
+
+# Define custom y-tick positions and labels
+y_ticks <- c(3339, 2944, 2549, 2154, 1759, 1364, 969, 574)  # Y-tick positions
+#y_labels <- c(8.3, 5.8, 3.3, 0.8,-1.7,-4.2,-6.7)  # Y-axis labels #<- 1:7
+y_labels <- c(-6, -4, -2, 0, 2, 4, 6, 8)  # Y-axis labels #<- 1:7
+axis(side = 4, at = y_ticks, labels = y_labels, col.axis = "black", las = 1)  #
+mtext("Temperature [°C]", side = 4, line = 3, col = "black", cex=0.8)  #
 
 palette(rb)
 img <- T_glac
@@ -543,7 +564,10 @@ palette(wb)
 img <- P_glac
 temp <- which(img > maxp)
 if(length(temp) > 0){img[temp] <- maxp}
-image(xx, glaciers, img, zlim=c(0,maxp), ylim=elim2, xlim=c(0,365),col=wb, xlab="", ylab="Glacier Cover [%]", xaxt = "n" )
+#image(xx, glaciers, img, zlim=c(0,maxp), ylim=elim2, xlim=c(0,365),col=wb, xlab="", ylab="Glacier Cover [%]", xaxt = "n" )
+image(xx, glaciers, img, zlim=c(0,maxp), ylim=elim2, xlim=c(0,365),col=wb, xlab="", ylab="", xaxt = "n" , yaxt="n")
+axis(4)
+mtext("Glacier Cover [%]", side = 4, line = 3, col = "black", cex=0.8)  #
 axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 #sig <- matrix(rep((mod_P$glac_p < 0.05),length(glaciers)),nrow=52,ncol=length(glaciers))
@@ -551,6 +575,12 @@ axis(side = 1, at = xtick, labels = rep("",13))
 sigmod <- which(mod_P$glac_p < 0.05)
 points(xx[sigmod],zero[sigmod]+elim2[2]*0.98, pch=15, col="gray")
 abline(elim2[2]*0.96,0)
+
+# Define custom y-tick positions and labels
+#y_ticks <- c(55, 42, 29, 16, 3)  # Y-tick positions
+#y_labels <- c(-6, -4, -2, 0, 2)  # Y-axis labels #<- 1:7
+#axis(side = 4, at = y_ticks, labels = y_labels, col.axis = "black", las = 1)  #
+#mtext("Temperature [°C]", side = 4, line = 3, col = "black", cex=0.8)  #
 
 dev.off() 
 
@@ -784,7 +814,8 @@ abs <- 2
 
 pdf(file="D:/R/Climate_sensitivity/Figure 3.pdf",width=8, height=7)
 
-par( mfrow = c(2,2),mar=c(c(2, 4, 1, 1) + 0.1), cex=0.8)
+#par( mfrow = c(2,2),mar=c(c(2, 4, 1, 1) + 0.1), cex=0.8)
+par(mfrow = c(2, 2), mar = c(2, 4, 1, 1) + 0.1, oma = c(0, 0, 0, 3), cex = 0.8)
 
 if(abs == 1){ maxt <- 1.5
 maxp <- 1.0
@@ -810,12 +841,15 @@ sigmod <- which(mod_T$elev_p < 0.05)
 points(xx[sigmod],zero[sigmod]+elim1[2]*0.98, pch=15, col="gray")
 #filled.contour(xx, elev, img,levels=seq(-maxt,maxt,length.out=21),ylim=elim1, xlim=c(0,365),col=rb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n")
 abline(elim1[2]*0.96,0)
+lines(xx, yy_iso, col="grey50", lwd=2, lty=5)
+lines(xx, yy_iso2, col="grey50", lwd=2, lty=2)
 
 palette(wb)
 img <- P_elev
 temp <- which(img > maxp)
 if(length(temp) > 0){img[temp] <- maxp}
-image(xx, elev, img, zlim=c(0,maxp), ylim=elim1, xlim=c(0,365),col=wb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n" )
+#image(xx, elev, img, zlim=c(0,maxp), ylim=elim1, xlim=c(0,365),col=wb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n" )
+image(xx, elev, img, zlim=c(0, maxp), ylim=elim1, xlim=c(0, 365), col=wb, xlab="", ylab="", xaxt="n", yaxt="n")
 axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 legend(1,elim1[2]*0.95, seq(0,maxp,length.out=6),col=wb, fill=seq(1,11,length.out=6), horiz=FALSE, title=title_legend_P, bty="n", xjust=0, cex=0.7)
@@ -824,6 +858,15 @@ legend(1,elim1[2]*0.95, seq(0,maxp,length.out=6),col=wb, fill=seq(1,11,length.ou
 sigmod <- which(mod_P$elev_p < 0.05)
 points(xx[sigmod],zero[sigmod]+elim1[2]*0.98, pch=15, col="gray")
 abline(elim1[2]*0.96,0)
+lines(xx, yy_iso, col="grey50", lwd=2, lty=5)
+lines(xx, yy_iso2, col="grey50", lwd=2, lty=2)
+
+# Define custom y-tick positions and labels
+y_ticks <- c(3339, 2944, 2549, 2154, 1759, 1364, 969, 574)  # Y-tick positions
+#y_labels <- c(8.3, 5.8, 3.3, 0.8,-1.7,-4.2,-6.7)  # Y-axis labels #<- 1:7
+y_labels <- c(-6, -4, -2, 0, 2, 4, 6, 8)  # Y-axis labels #<- 1:7
+axis(side = 4, at = y_ticks, labels = y_labels, col.axis = "black", las = 1)  #
+mtext("Temperature [°C]", side = 4, line = 3, col = "black", cex=0.8)  #
 
 palette(rb)
 img <- T_glac
@@ -842,7 +885,10 @@ palette(wb)
 img <- P_glac
 temp <- which(img > maxp)
 if(length(temp) > 0){img[temp] <- maxp}
-image(xx, glaciers, img, zlim=c(0,maxp), ylim=elim2, xlim=c(0,365),col=wb, xlab="", ylab="Glacier Cover [%]", xaxt = "n" )
+#image(xx, glaciers, img, zlim=c(0,maxp), ylim=elim2, xlim=c(0,365),col=wb, xlab="", ylab="Glacier Cover [%]", xaxt = "n" )
+image(xx, glaciers, img, zlim=c(0,maxp), ylim=elim2, xlim=c(0,365),col=wb, xlab="", ylab="", xaxt = "n" , yaxt="n")
+axis(4)
+mtext("Glacier Cover [%]", side = 4, line = 3, col = "black", cex=0.8)  #
 axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 #sig <- matrix(rep((mod_P$glac_p < 0.05),length(glaciers)),nrow=52,ncol=length(glaciers))
