@@ -75,7 +75,7 @@ etit <- "Elevation(m)"
 height <- as.numeric(out_T$elev_ezg)
 glac <- as.numeric(out_T$Glacier)
 
-elev <- seq(500,3500,100)
+elev <- seq(500,3000,100)
 glaciers <- seq(0,60,2.5)
 
 
@@ -289,7 +289,7 @@ dev.off()
 mod <- lm(glac[which(glac > 0)] ~ height[which(glac > 0)])
 glac_elev <- mod$coefficients[2]*elev+mod$coefficients[1]
 glac_elev[which(glac_elev <= 0)] <- 0
-plot(height,glac, xlim=c(500,3500))
+plot(height,glac, xlim=c(500,3000))
 lines(elev,glac_elev)
 
 # using the data from all 150 km2 catchments in CH
@@ -483,7 +483,7 @@ wbb <- rev(rgb(seq(0,1,length.out=11), seq(0,1,length.out=11), seq(0,1,length.ou
 wb <- rev(rgb(seq(0,1,length.out=11), seq(0,1,length.out=11), seq(1,1,length.out=11)))  # white to dark blue
 wbt <- rev(rgb(seq(1,1,length.out=11), seq(1,1,length.out=11), seq(1,1,length.out=11), seq(0.1,0.9,length.out=11)))			# white to black but variable transparent
 
-elim1 <- c(500,3710)
+elim1 <- c(500,3210) #c(500,3710)
 elim2 <- c(0,64)
 
 abs <- 1
@@ -518,7 +518,7 @@ points(xx[sigmod],zero[sigmod]+elim1[2]*0.98, pch=15, col="gray")
 #filled.contour(xx, elev, img,levels=seq(-maxt,maxt,length.out=21),ylim=elim1, xlim=c(0,365),col=rb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n")
 abline(elim1[2]*0.96,0)
 yy_iso <- out_isotherm$isotherm.1[1:52]
-yy_iso[yy_iso>3550] = NA
+yy_iso[yy_iso>3050] = NA
 yy_iso2 <- out_isotherm$isotherm.2[1:52]
 lines(xx, yy_iso, col="grey50", lwd=2, lty=5)
 lines(xx, yy_iso2, col="grey50", lwd=2, lty=2)
@@ -807,7 +807,7 @@ wbb <- rev(rgb(seq(0,1,length.out=11), seq(0,1,length.out=11), seq(0,1,length.ou
 wb <- rev(rgb(seq(0,1,length.out=11), seq(0,1,length.out=11), seq(1,1,length.out=11)))  # white to dark blue
 wbt <- rev(rgb(seq(1,1,length.out=11), seq(1,1,length.out=11), seq(1,1,length.out=11), seq(0.1,0.9,length.out=11)))			# white to black but variable transparent
 
-elim1 <- c(500,3710)
+elim1 <- c(500,3210)
 elim2 <- c(0,64)
 
 abs <- 2
