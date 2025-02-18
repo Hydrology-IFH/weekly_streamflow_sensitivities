@@ -16,9 +16,9 @@ library(lubridate)
 
 # calculate station averages
 
-path_p <- "D:/R/Climate_sensitivity/data/"	
-path_t <- "D:/R/Climate_sensitivity/data_temp/"
-path <- "D:/R/Climate_sensitivity/Abflussdaten/"
+path_p <- "D:/R/weekly_streamflow_sensitivities/data/"	
+path_t <- "D:/R/weekly_streamflow_sensitivities/data_temp/"
+path <- "D:/R/weekly_streamflow_sensitivities/Abflussdaten/"
 files <- read.csv(paste(path,"Klima_Abfluss_Vergleich.csv", sep =""), header=TRUE)
 
 nr <- length(files$Q_Nr)
@@ -102,7 +102,7 @@ for (ii in 1:nr)   # nr
 }
 
 ### elevation and temperature
-pdf("D:/R/Climate_sensitivity/temp_vs_elevation.pdf", width = 4, height = 4.5)  
+pdf("D:/R/weekly_streamflow_sensitivities/temp_vs_elevation.pdf", width = 4, height = 4.5)  
 # plot
 plot(results$Tm, results$elev, 
      xlab = "Temperature [°C]", 
@@ -121,7 +121,7 @@ results$temp_ezg <- coef(model)[1] + coef(model)[2] * results$elev_ezg
 dev.off()
 
 ### elevation and snow fraction
-pdf("D:/R/Climate_sensitivity/snowfraction_vs_elevation.pdf", width = 4, height = 4.5)
+pdf("D:/R/weekly_streamflow_sensitivities/snowfraction_vs_elevation.pdf", width = 4, height = 4.5)
 # plot
 plot(results$snowfrac, results$elev, 
      xlab = "Snow fraction [-]", 
@@ -140,7 +140,7 @@ results$snowfrac_ezg <- coef(model)[1] + coef(model)[2] * results$elev_ezg
 dev.off()
 
 ### elevation and precipitation
-pdf("D:/R/Climate_sensitivity/precipitation_vs_elevation.pdf", width = 4, height = 4.5) 
+pdf("D:/R/weekly_streamflow_sensitivities/precipitation_vs_elevation.pdf", width = 4, height = 4.5) 
 # plot
 plot(results$Pm, results$elev, 
      xlab = "Precipitation [mm/y]", 
@@ -159,7 +159,7 @@ results$precip_ezg <- coef(model)[1] + coef(model)[2] * results$elev_ezg
 dev.off()
 
 ### glacier cover and temperature
-pdf("D:/R/Climate_sensitivity/temp_vs_glaciers.pdf", width = 4, height = 4.5) 
+pdf("D:/R/weekly_streamflow_sensitivities/temp_vs_glaciers.pdf", width = 4, height = 4.5) 
 # plot
 plot(results$temp_ezg[results$Glacier>0], results$Glacier[results$Glacier>0], 
      xlab = "Temperature [°C]", 
@@ -175,7 +175,7 @@ print(round(correlation,3))
 dev.off()
 
 ### glacier cover and temperature
-pdf("D:/R/Climate_sensitivity/snowfrac_vs_glaciers.pdf", width = 4, height = 4.5) 
+pdf("D:/R/weekly_streamflow_sensitivities/snowfrac_vs_glaciers.pdf", width = 4, height = 4.5) 
 # plot
 plot(results$snowfrac_ezg[results$Glacier>0], results$Glacier[results$Glacier>0], 
      xlab = "Snow fraction [-]", 
@@ -215,7 +215,7 @@ print(round(glacier_predict,0))
 
 
 ### elevation and temperature for each week
-pdf("D:/R/Climate_sensitivity/weekly_temp.pdf", width = 4, height = 4.5)  
+pdf("D:/R/weekly_streamflow_sensitivities/weekly_temp.pdf", width = 4, height = 4.5)  
 
 weekly_isotherm <- matrix(NA, 53, 2)	
 temperature <- 0 #c(0,1,2)
@@ -254,7 +254,7 @@ dev.off()
 
 
 out_isotherm <- data.frame(week = seq(1, 53, 1), isotherm = weekly_isotherm)
-pdf("D:/R/Climate_sensitivity/weekly_temp_regime.pdf", width = 4, height = 4.5)  
+pdf("D:/R/weekly_streamflow_sensitivities/weekly_temp_regime.pdf", width = 4, height = 4.5)  
 plot(out_isotherm$week, out_isotherm$isotherm.1, 
      xlab = "Week [-]", 
      ylab = "Elevation [m a.s.l.]", 

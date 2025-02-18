@@ -164,8 +164,6 @@ library(relaimpo)   ## zur Berechnung der Variable Importance
 # Groemping, U. (2006). Relative Importance for Linear Regression in R: The Package relaimpo. Journal of Statistical Software, 17(1), 1–27.
 # Groemping, U. (2007). Estimators of Relative Importance in Linear Regression Based on Variance Decomposition. The American Statistician, 61, 139-147. doi:10.1198/000313007X188252
 library(car)
-library(dplyr)
-library(lubridate)
 
 
 
@@ -197,7 +195,7 @@ layout(matrix(c((seq(from=1,by=5,length.out=25)),(seq(from=2,by=5,length.out=25)
 
 par(mar=c(c(4, 4, 3, 1) + 0.1), cex=0.7)   #(3, 3, 4, 2)
 
-# define data frame for final results for annual data
+# define data frame for finral results for annual data
 
 precip <- data.frame(year=seq(1925,2012))
 temp <- data.frame(year=seq(1925,2012))
@@ -220,9 +218,10 @@ out_Q$p <- matrix(NA, nrow=nr, ncol=52)				# mean predictor
 out_Q$coeff <- matrix(NA, nrow=nr, ncol=52) 		# coefficients
 out_Q$var_imp <- matrix(NA, nrow=nr, ncol=52) 		# Variable importance
 
-out_SWE <- files										# SWE
-out_SWE$week <- matrix(NA, nrow=nr, ncol=52) 		# Variable importance
-out_SWE$SWE <- matrix(NA, nrow=nr, ncol=52) 		# Variable importance
+out_TP <- files										# Interaction between P and T
+out_TP$p <- matrix(NA, nrow=nr, ncol=52)				# mean predictor
+out_TP$coeff <- matrix(NA, nrow=nr, ncol=52) 		# coefficients
+out_TP$var_imp <- matrix(NA, nrow=nr, ncol=52) 		# Variable importance
 
 #  Main Loop
 
@@ -366,15 +365,6 @@ for (ii in 1:nr)   # nr
   aw$Q_1[2:length(aw$Q)] <- aw$Q[2:length(aw$Q)-1]   # Q of time step t-1 for autocorrelation
   
   
-  # calc average SWE per week
-  aw <- aw %>%
-    mutate(week = week(date))
-    weekly_avg_swe <- aw %>%
-    group_by(week) %>%
-    summarise(avg_swe = mean(swe, na.rm = TRUE))  # na.rm = TRUE to handle missing values
-  #plot(weekly_avg_swe$week, weekly_avg_swe$avg_swe, xlab="Date", ylab="SWE", col="blue", lwd=1, type="l")
-  
-  
   # analysis with weekly data
   
   ny <- length(annu$y)
@@ -386,7 +376,7 @@ for (ii in 1:nr)   # nr
   pred_w <- matrix(NA, nrow=ny, ncol=ws)   #  prediction
   res_w <- matrix(NA, nrow=ny, ncol=ws)    #   residue
   res_w_l <- matrix(NA, nrow=ny, ncol=ws)  # smooth residu
-  w_lm <- data.frame(w=seq(1,ws), t_c=rep(NA,ws), i_c=rep(NA, ws), i1_c=rep(NA,ws), r2=rep(NA,ws), t_r=rep(0,ws), i_r=rep(0, ws), i1_r=rep(0,ws),  q=rep(NA,ws), t_l=rep(0,ws), i_l=rep(0, ws), i1_l=rep(0,ws),  t_u=rep(0,ws), i_u=rep(0, ws), i1_u=rep(0,ws), t=rep(NA,ws), p=rep(NA,ws), b0=rep(NA,ws), a0=rep(NA,ws), partial_cor_P=rep(NA,ws))
+  w_lm <- data.frame(w=seq(1,ws), t_c=rep(NA,ws), i_c=rep(NA, ws), i1_c=rep(NA,ws), r2=rep(NA,ws), t_r=rep(0,ws), i_r=rep(0, ws), i1_r=rep(0,ws),  q=rep(NA,ws), t_l=rep(0,ws), i_l=rep(0, ws), i1_l=rep(0,ws),  t_u=rep(0,ws), i_u=rep(0, ws), i1_u=rep(0,ws), t=rep(NA,ws), p=rep(NA,ws), b0=rep(NA,ws), a0=rep(NA,ws))
   w_mod <- list()
   #  c = coefficient, r = variable importance, l = lower Konfidenzbereich, u = upper confidence limit
   
@@ -398,8 +388,8 @@ for (ii in 1:nr)   # nr
     if (length(good) > 15) {
       Q <- aw$Q[good]
       T <- aw$T[good]
-      inp <- aw$P[good]     # precip 
-      #inp <- aw$inp[good]   # snow
+      #inp <- aw$P[good]     # precip 
+      inp <- aw$inp[good]   # snow
       #swe <- aw$swe[good]
       inp1 <- aw$Q_1[good]			# autocorrelation
       Y <- aw$y[good]
@@ -407,33 +397,38 @@ for (ii in 1:nr)   # nr
       w_lm$q[mw] <- mean.na(Q)
       w_lm$t[mw] <- mean.na(T)
       w_lm$p[mw] <- mean.na(inp)
+      w_lm$tp[mw] <- mean.na(T*inp)
       
       #  auch noch Abfluss der Woche davor dazu um die Autokorrelation zu berücksichtigen
       
       wo1 <- match(Y, annu$y)
       
       #mod <- loess(Q ~ T + inp + inp1, degree=1, span=.75)   
-      mod <- lm(Q ~ T + inp + inp1)  
+      mod <- lm(Q ~ T + inp + inp1 + T*inp)  
       
       w_lm$a0[mw] <- 	mod$coefficients[1]
       w_lm$t_c[mw] <- 	mod$coefficients[2]
       w_lm$i_c[mw] <- 	mod$coefficients[3]
       w_lm$i1_c[mw] <- 	mod$coefficients[4]
+      w_lm$int1_c[mw] <- 	mod$coefficients[5]
       
       # berechnung der Konfidenzbereiche des Coeffizinten:  confint(mod)
       conf <- confint(mod)
       w_lm$t_l[mw] <- 	conf[2,1]
       w_lm$i_l[mw] <- 	conf[3,1]
       w_lm$i1_l[mw] <- 	conf[4,1]
+      w_lm$int1_c[mw] <- 	conf[5,1]
       w_lm$t_u[mw] <- 	conf[2,2]
       w_lm$i_u[mw] <- 	conf[3,2]
       w_lm$i1_u[mw] <- 	conf[4,2]
+      w_lm$int1_u[mw] <- 	conf[5,2]
       
       
       varimp <- calc.relimp(mod)
       w_lm$t_r[mw] <- 	varimp$lmg[1]
       w_lm$i_r[mw] <- 	varimp$lmg[2]
-      w_lm$i1_r[mw] <- 	varimp$lmg[3]		
+      w_lm$i1_r[mw] <- 	varimp$lmg[3]	
+      w_lm$int1_r[mw] <- 	varimp$lmg[4]			
       
       w_mod[[mw]] <- mod
       
@@ -444,22 +439,10 @@ for (ii in 1:nr)   # nr
       res_w[wo1,mw] <- mod$residuals
       mod1 <- loess((predict(mod)-Q) ~ Y, degree=2, span=.6)
       res_w_l[wo1,mw] <- predict(mod1)
-      
-
-      # partial corr test
-      data <- data.frame(Q = Q, inp = inp, T = T, inp1 = inp1)
-      result <- pcor(data)
-      w_lm$partial_cor_P[mw] <- result$estimate["Q", "inp"]
-      
-      
     }
   }
   
-  # test
-  dev.new()
-  plot(w_lm$w, w_lm$i_r, type = "l", col = "blue", xlab = "w", ylab = "Values", ylim = range(c(w_lm$i_r, w_lm$partial_cor_P)), lwd = 2)
-  lines(w_lm$w, w_lm$partial_cor_P, type = "l", col = "orange", lwd = 2)
-  legend("bottomleft", legend = c("i_r", "partial_cor_P"), col = c("blue", "orange"), lty = 1, lwd = 2)
+  
   
   
   #  write weekly sensitivity data for each station
@@ -477,9 +460,9 @@ for (ii in 1:nr)   # nr
   out_Q$var_imp[ii,] <- w_lm$i1_r
   #out_Q$a0[ii,] <- w_lm$a0
   
-  #out_SWE$week[ii,] <- weekly_avg_swe$week
-  #out_SWE$SWE[ii,] <- weekly_avg_swe$avg_swe
-  
+  out_TP$p[ii,] <- w_lm$q
+  out_TP$coeff[ii,] <- w_lm$int1_c
+  out_TP$var_imp[ii,] <- w_lm$int1_r
   
   
   #  end main Loop
@@ -487,11 +470,12 @@ for (ii in 1:nr)   # nr
 
 dev.off()
 
-write.table(out_T,file=paste(path,"Weekly_Sensitivity_to_T.txt", sep ="" ))
-write.table(out_P,file=paste(path,"Weekly_Sensitivity_to_P.txt", sep ="" ))
-write.table(out_Q,file=paste(path,"Weekly_Sensitivity_to_Q.txt", sep ="" ))
-#write.table(out_SWE,file=paste(path,"Weekly_SWE.txt", sep ="" ))
+# LOOP USUALLY BREAKS AT ii=23, so I manually saved the first 22 catchments.
 
+write.table(out_T,file=paste(path,"Weekly_Sensitivity_to_T_interaction.txt", sep ="" ))
+write.table(out_P,file=paste(path,"Weekly_Sensitivity_to_P_interaction.txt", sep ="" ))
+write.table(out_Q,file=paste(path,"Weekly_Sensitivity_to_Q_interaction.txt", sep ="" ))
+write.table(out_TP,file=paste(path,"Weekly_Sensitivity_to_PT_interaction.txt", sep ="" ))
 
 
 
