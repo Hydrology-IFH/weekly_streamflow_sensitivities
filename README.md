@@ -1,9 +1,9 @@
-## Seasonal and elevation-dependent patterns of weekly streamflow sensitivities to climatic variability in alpine catchments
+## Streamflow sensitivity regimes of alpine catchments
 
 *Note that the manuscript has not been reviewed yet.*
 
 This repository contains
-- code to calculate sensitivities,
+- code to calculate weekly sensitivities and their dependence on catchment properties,
 - resulting weekly sensitivities and additional information,
-- and code to visualize results.
+- code to visualize results.
 
