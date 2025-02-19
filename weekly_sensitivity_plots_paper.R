@@ -406,8 +406,8 @@ lines(xx, yy_iso2, col="grey50", lwd=2, lty=2)
 # Define custom y-tick positions and labels
 y_ticks <- c(3339, 2944, 2549, 2154, 1759, 1364, 969, 574)  # Y-tick positions
 #y_labels <- c(8.3, 5.8, 3.3, 0.8,-1.7,-4.2,-6.7)  # Y-axis labels #<- 1:7
-y_labels <- c(-6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0)  # Y-axis labels #<- 1:7
-axis(side = 4, at = y_ticks, labels = y_labels, col.axis = "black", las = 1)  #
+y_labels <- c(-6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0, 8.0)  # Y-axis labels #<- 1:7 
+axis(side = 4, at = y_ticks, labels = y_labels, col.axis = "black", las = 0)  #
 mtext("Temperature [°C]", side = 4, line = 3, col = "black", cex=0.8)  #
 
 par(xaxs = "i", yaxs = "i")
@@ -654,7 +654,7 @@ lines(xx, yy_iso2, col="grey50", lwd=2, lty=2)
 y_ticks <- c(3339, 2944, 2549, 2154, 1759, 1364, 969, 574)  # Y-tick positions
 #y_labels <- c(8.3, 5.8, 3.3, 0.8,-1.7,-4.2,-6.7)  # Y-axis labels #<- 1:7
 y_labels <- c(-6, -4, -2, 0, 2, 4, 6, 8)  # Y-axis labels #<- 1:7
-axis(side = 4, at = y_ticks, labels = y_labels, col.axis = "black", las = 1)  #
+axis(side = 4, at = y_ticks, labels = y_labels, col.axis = "black", las = 0)  #
 mtext("Temperature [°C]", side = 4, line = 3, col = "black", cex=0.8)  #
 
 par(mar = c(3, 4, 1, 1) + 0.1)
