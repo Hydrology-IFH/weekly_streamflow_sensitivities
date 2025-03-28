@@ -63,6 +63,7 @@ out_T <- read.table(file="D:/R/weekly_streamflow_sensitivities/Weekly_Sensitivit
 out_P <- read.table(file="D:/R/weekly_streamflow_sensitivities/Weekly_Sensitivity_to_P.txt")
 out_Q <- read.table(file="D:/R/weekly_streamflow_sensitivities/Weekly_Sensitivity_to_Q.txt")
 out_isotherm <- read.table(file="D:/R/weekly_streamflow_sensitivities/0deg_isotherm_regime.txt")
+out_SWE <- read.table(file="D:/R/weekly_streamflow_sensitivities/Weekly_SWE.txt")
 
 #path <- "/Users/mweiler/Markus/Research Projects/KHR/Abflussdaten/"
 
@@ -94,6 +95,8 @@ out_Q.p <- out_Q[,in1:(in1+ws-1)]
 out_Q.coeff <- out_Q[,(in1+ws):(in1+2*ws-1)]
 out_Q.var <- out_Q[,(in1+2*ws):(in1+3*ws-1)]
 #a0 <- out_Q[,(in1+3*ws):(in1+4*ws-1)]
+out_SWE.week <- out_SWE[,in1:(in1+ws-1)]
+out_SWE.swe <- out_SWE[,(in1+ws):(in1+2*ws-1)]
 
 tcoef <- matrix(NA, nrow=nr, ncol=52)
 pcoef <- matrix(NA, nrow=nr, ncol=52)
@@ -132,7 +135,7 @@ dev.off()
 
 
 # Total variation explained (Figure S2)
-
+movavg <-1
 ### explained variance
 for (i in 1:nr) {tcoef[i,] <- ma.filtc(as.numeric(out_T.var[i,]),movavg)}  
 for (i in 1:nr) {pcoef[i,] <- ma.filtc(as.numeric(out_P.var[i,]),movavg)}
@@ -580,7 +583,22 @@ if(inter == 1){
 
 dev.off()
 
+# SWE regime curves (Figure S6)
+pdf(file="D:/R/weekly_streamflow_sensitivities/Figure S6.pdf",width=6, height=4)
 
+par(mfrow = c(1,1), 
+    mar = c(3, 4, 1, 1) + 0.1, 
+    cex = 0.9)
+
+ylim1 <- c(0.1,1200)
+plot(xx,out_SWE.swe[1,], typ="l", ylim=ylim1, col=col[(height[1]-500)*.01], xlab="", ylab="Average SWE [mm]", xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+#abline(0,0)
+for (i in 1:nr) {points(xx,out_SWE.swe[i,], typ="l",col=col[ceiling((height[i]-500)*.01)], lwd = 2)}
+legend(1,ylim1[2], seq(500,3000,length.out=11),col=col, fill=seq(1,25,length.out=11), horiz=F, title="H [m a.s.l.]", bty="n", xjust=-0.1, cex=0.6)
+
+dev.off() 
 
 
 
