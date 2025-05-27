@@ -136,7 +136,7 @@ axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 abline(0,0)
 for (i in 1:nr) {points(xx,tcoef[i,], typ="l",col=col[ceiling((height[i]-500)*.01)], lwd = 2)}
-legend(1,ylim1[2], seq(500,3000,length.out=11),col=col, fill=seq(1,25,length.out=11), horiz=F, title="H [m a.s.l.]", bty="n", xjust=-0.05, cex=0.6)
+legend(1,ylim1[2], seq(500,3000,length.out=6),col=col, fill=seq(1,25,length.out=6), horiz=F, title="H [m a.s.l.]", bty="n", xjust=-0.05, cex=0.8)
 
 ylim1 <- c(-0.1,1.0)
 plot(xx,pcoef[1,], typ="l", ylim=ylim1, col=col[(height[1]-500)*.01], xlab="", ylab = expression(b[P]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
@@ -184,7 +184,7 @@ axis(side = 1, at = xtick, labels = rep("",13))
 abline(0,0)
 for (i in 1:nr) {points(xx,qcoef[i,], typ="l",col=col[ceiling((height[i]-500)*.01)], lwd = 2)}
 # legend(183,ylim1[2], seq(500,3000,length.out=6),col=col, fill=seq(1,25,length.out=6), horiz=TRUE, title="Elevation [m a.s.l.]", bty="n", xjust=0.5, cex=0.8)
-legend(1,ylim1[2], seq(500,3000,length.out=11),col=col, fill=seq(1,25,length.out=11), horiz=F, title="Elevation [m a.s.l.]", bty="n", xjust=-2.5, cex=0.7)
+legend(1,ylim1[2], seq(500,3000,length.out=11),col=col, fill=seq(1,25,length.out=11), horiz=F, title="Elevation [m a.s.l.]", bty="n", xjust=-2.5, cex=0.8)
 
 ### explained variation
 for (i in 1:nr) {tcoef[i,] <- ma.filtc(as.numeric(out_T.var[i,]),movavg)}  
@@ -374,7 +374,7 @@ temp <- which(img > maxt)
 if(length(temp) > 0){img[temp] <- maxt}
 par(mar = c(0, 4, 1, 1) + 0.1)
 image(xx, elev, img, zlim=c(-maxt,maxt), ylim=elim1, xlim=c(0,365), col=rb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n" )  
-legend(1,elim1[2]*0.95, seq(-maxt,maxt,length.out=11),col=rb, fill=seq(1,21,length.out=11), horiz=FALSE, title=title_legend_T, bty="n", xjust=0, cex=0.7)
+legend(1,elim1[2]*0.95, seq(-maxt,maxt,length.out=11),col=rb, fill=seq(1,21,length.out=11), horiz=FALSE, title=title_legend_T, bty="n", xjust=0, cex=0.8)
 #sig <- matrix(rep((mod_T$elev_p < 0.05),length(elev)),nrow=52,ncol=length(elev))
 #image(xx, elev, sig, col=c(rgb(.3,.3,.3,.3),rgb(1,1,1,0)), add=T, zlim=c(0,1))
 sigmod <- which(mod_T$elev_p < 0.05)
@@ -394,7 +394,7 @@ if(length(temp) > 0){img[temp] <- maxp}
 par(mar = c(0, 4, 1, 1) + 0.1)
 #image(xx, elev, img, zlim=c(0,maxp), ylim=elim1, xlim=c(0,365),col=wb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n" )
 image(xx, elev, img, zlim=c(0, maxp), ylim=elim1, xlim=c(0, 365), col=wb, xlab="", ylab="", xaxt="n", yaxt="n")
-legend(1,elim1[2]*0.95, seq(0,maxp,length.out=6),col=wb, fill=seq(1,11,length.out=6), horiz=FALSE, title=title_legend_P, bty="n", xjust=0, cex=0.7)
+legend(1,elim1[2]*0.95, seq(0,maxp,length.out=6),col=wb, fill=seq(1,11,length.out=6), horiz=FALSE, title=title_legend_P, bty="n", xjust=0, cex=0.8)
 #sig <- matrix(rep((mod_P$elev_p < 0.05),length(elev)),nrow=52,ncol=length(elev))
 #image(xx, elev, sig, col=c(rgb(.3,.3,.3,.3),rgb(1,1,1,0)), add=T, zlim=c(0,1))
 sigmod <- which(mod_P$elev_p < 0.05)
@@ -624,7 +624,7 @@ temp <- which(img > maxt)
 if(length(temp) > 0){img[temp] <- maxt}
 par(mar = c(0, 4, 1, 1) + 0.1)
 image(xx, elev, img, zlim=c(-maxt,maxt), ylim=elim1, xlim=c(0,365), col=rb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n" )  
-legend(1,elim1[2]*0.95, seq(-maxt,maxt,length.out=11),col=rb, fill=seq(1,21,length.out=11), horiz=FALSE, title=title_legend_T, bty="n", xjust=0, cex=0.7)
+legend(1,elim1[2]*0.95, seq(-maxt,maxt,length.out=11),col=rb, fill=seq(1,21,length.out=11), horiz=FALSE, title=title_legend_T, bty="n", xjust=0, cex=0.8)
 #sig <- matrix(rep((mod_T$elev_p < 0.05),length(elev)),nrow=52,ncol=length(elev))
 #image(xx, elev, sig, col=c(rgb(.3,.3,.3,.3),rgb(1,1,1,0)), add=T, zlim=c(0,1))
 sigmod <- which(mod_T$elev_p < 0.05)
@@ -641,7 +641,7 @@ if(length(temp) > 0){img[temp] <- maxp}
 #image(xx, elev, img, zlim=c(0,maxp), ylim=elim1, xlim=c(0,365),col=wb, xlab="", ylab="Elevation [m a.s.l.]", xaxt = "n" )
 par(mar = c(0, 4, 1, 1) + 0.1)
 image(xx, elev, img, zlim=c(0, maxp), ylim=elim1, xlim=c(0, 365), col=wb, xlab="", ylab="", xaxt="n", yaxt="n")
-legend(1,elim1[2]*0.95, seq(0,maxp,length.out=6),col=wb, fill=seq(1,11,length.out=6), horiz=FALSE, title=title_legend_P, bty="n", xjust=0, cex=0.7)
+legend(1,elim1[2]*0.95, seq(0,maxp,length.out=6),col=wb, fill=seq(1,11,length.out=6), horiz=FALSE, title=title_legend_P, bty="n", xjust=0, cex=0.8)
 #sig <- matrix(rep((mod_P$elev_p < 0.05),length(elev)),nrow=52,ncol=length(elev))
 #image(xx, elev, sig, col=c(rgb(.3,.3,.3,.3),rgb(1,1,1,0)), add=T, zlim=c(0,1))
 sigmod <- which(mod_P$elev_p < 0.05)

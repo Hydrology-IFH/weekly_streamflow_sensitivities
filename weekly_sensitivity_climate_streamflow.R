@@ -224,11 +224,13 @@ out_SWE <- files										# SWE
 out_SWE$week <- matrix(NA, nrow=nr, ncol=52) 		# Variable importance
 out_SWE$SWE <- matrix(NA, nrow=nr, ncol=52) 		# Variable importance
 
+out_BFI <- files										# BFI
+out_BFI$BFI <- matrix(NA, nrow=nr, ncol=1) 	
+
 #  Main Loop
 
 for (ii in 1:nr)   # nr
 {
-  
   
   
   # # Berechnung für ganzes Jahr (1-12) oder nur für Sommer (4-9)
@@ -244,6 +246,11 @@ for (ii in 1:nr)   # nr
   files$start[ii] <- min(a$y)
   files$end[ii] <- max(a$y)
   
+  
+  # calculate BFI
+  library(UKFE)
+  bfi_result <- BFI(Q =  a$Q, Plot = FALSE)
+  out_BFI$BFI[ii,] <- bfi_result
   
   #annual time series: average or sum
   
@@ -400,7 +407,7 @@ for (ii in 1:nr)   # nr
       T <- aw$T[good]
       inp <- aw$P[good]     # precip 
       #inp <- aw$inp[good]   # snow
-      #swe <- aw$swe[good]
+      swe <- aw$swe[good]
       inp1 <- aw$Q_1[good]			# autocorrelation
       Y <- aw$y[good]
       
@@ -445,8 +452,8 @@ for (ii in 1:nr)   # nr
       mod1 <- loess((predict(mod)-Q) ~ Y, degree=2, span=.6)
       res_w_l[wo1,mw] <- predict(mod1)
       
-
       # partial corr test
+      library(ppcor)
       data <- data.frame(Q = Q, inp = inp, T = T, inp1 = inp1)
       result <- pcor(data)
       w_lm$partial_cor_P[mw] <- result$estimate["Q", "inp"]
@@ -455,11 +462,11 @@ for (ii in 1:nr)   # nr
     }
   }
   
-  # test
-  dev.new()
-  plot(w_lm$w, w_lm$i_r, type = "l", col = "blue", xlab = "w", ylab = "Values", ylim = range(c(w_lm$i_r, w_lm$partial_cor_P)), lwd = 2)
-  lines(w_lm$w, w_lm$partial_cor_P, type = "l", col = "orange", lwd = 2)
-  legend("bottomleft", legend = c("i_r", "partial_cor_P"), col = c("blue", "orange"), lty = 1, lwd = 2)
+  # partial correlations
+  #dev.new()
+  #plot(w_lm$w, w_lm$i_r, type = "l", col = "blue", xlab = "w", ylab = "Values", ylim = range(c(w_lm$i_r, w_lm$partial_cor_P)), lwd = 2)
+  #lines(w_lm$w, w_lm$partial_cor_P, type = "l", col = "orange", lwd = 2)
+  #legend("bottomleft", legend = c("i_r", "partial_cor_P"), col = c("blue", "orange"), lty = 1, lwd = 2)
   
   
   #  write weekly sensitivity data for each station
@@ -477,8 +484,8 @@ for (ii in 1:nr)   # nr
   out_Q$var_imp[ii,] <- w_lm$i1_r
   #out_Q$a0[ii,] <- w_lm$a0
   
-  #out_SWE$week[ii,] <- weekly_avg_swe$week
-  #out_SWE$SWE[ii,] <- weekly_avg_swe$avg_swe
+  out_SWE$week[ii,] <- weekly_avg_swe$week
+  out_SWE$SWE[ii,] <- weekly_avg_swe$avg_swe
   
   
   
@@ -490,11 +497,110 @@ dev.off()
 write.table(out_T,file=paste(path,"Weekly_Sensitivity_to_T.txt", sep ="" ))
 write.table(out_P,file=paste(path,"Weekly_Sensitivity_to_P.txt", sep ="" ))
 write.table(out_Q,file=paste(path,"Weekly_Sensitivity_to_Q.txt", sep ="" ))
-#write.table(out_SWE,file=paste(path,"Weekly_SWE.txt", sep ="" ))
+write.table(out_SWE,file=paste(path,"Weekly_SWE.txt", sep ="" ))
 
 
 
+### 
+
+# Common parameters
+xx <- seq(1, 52) * 7 - 3
+xtick <- c(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365)
+xtlab <- c("J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D", NA)
+plot_settings <- list(
+  type = "l", col = "black", lwd = 2,
+  xlab = "", ylab = "Spearman rank correlation",
+  ylim = c(-1, 1), xaxt = "n", xaxs = "i"
+)
+
+# Custom plotting function
+create_plot <- function(correlations, filename) {
+  png(filename,
+      width = 6, height = 4,
+      units = "in", res = 300) # High-resolution compact format
+  
+  plot(xx, correlations,
+       type = plot_settings$type,
+       pch = plot_settings$pch,
+       col = plot_settings$col,
+       lwd = plot_settings$lwd,
+       xlab = plot_settings$xlab,
+       ylab = plot_settings$ylab,
+       ylim = plot_settings$ylim,
+       xaxt = plot_settings$xaxt,
+       xaxs = plot_settings$xaxs)
+  
+  axis(1, at = xtick + 13, labels = xtlab, lwd.ticks = 0)
+  axis(1, at = xtick, labels = rep("", length(xtick)))
+  abline(h = 0, lty = 2, col = "grey")
+  
+  dev.off()
+}
+
+# Loop over columns and calculate correlations for BFI vs coeff
+correlations <- numeric(52)
+for (week in seq_len(ncol(out_Q$coeff))) {
+  correlations[week] <- cor(out_BFI$BFI, out_Q$coeff[, week], method = "spearman", use = "complete.obs")
+}
+create_plot(correlations, "D:/R/weekly_streamflow_sensitivities/correlation_plot_BFI_bQ.png")
+
+# Loop over columns and calculate correlations for BFI vs var_imp
+correlations <- numeric(52)
+for (week in seq_len(ncol(out_Q$var_imp))) {
+  correlations[week] <- cor(out_BFI$BFI, out_Q$var_imp[, week], method = "spearman", use = "complete.obs")
+}
+create_plot(correlations, "D:/R/weekly_streamflow_sensitivities/correlation_plot_BFI_varimp.png")
+
+# Loop over columns and calculate correlations for SWE vs bQ
+correlations <- numeric(52)
+for (week in seq_len(ncol(out_Q$coeff))) {
+  correlations[week] <- cor(out_SWE$SWE, out_Q$coeff[, week], method = "spearman", use = "complete.obs")
+}
+create_plot(correlations, "D:/R/weekly_streamflow_sensitivities/correlation_plot_SWE_bQ.png")
+
+# Loop over columns and calculate correlations for SWE vs bT
+correlations <- numeric(52)
+for (week in seq_len(ncol(out_T$coeff))) {
+  correlations[week] <- cor(out_SWE$SWE, out_T$coeff[, week], method = "spearman", use = "complete.obs")
+}
+create_plot(correlations, "D:/R/weekly_streamflow_sensitivities/correlation_plot_SWE_bT.png")
 
 
+###
 
+# Calculate Spearman correlations for each catchment
+n_catchments <- ncol(out_Q$coeff)  # Number of catchments (columns)
+correlations <- numeric(n_catchments)  # Initialize vector to store correlations
 
+for (catchment in 1:n_catchments) {
+  correlations[catchment] <- cor(out_Q$coeff[, catchment], out_SWE$SWE[, catchment], 
+                                 method = "spearman", use = "complete.obs")
+}
+
+# Sort correlations by elevation
+sorted_indices <- order(out_Q$elev_ezg)  # Sort indices by elevation
+sorted_correlations <- correlations[sorted_indices]
+sorted_elevation <- out_Q$elev_ezg[sorted_indices]
+
+# Plot correlations sorted by elevation
+png("D:/R/weekly_streamflow_sensitivities/correlation_sorted_by_elevation.png", 
+    width = 4, height = 6, units = "in", res = 300)
+
+plot(sorted_correlations, sorted_elevation, type = "p", col = "black", pch = 19,
+     ylab = "Elevation (m)", xlab = "Spearman rank correlation",
+     xlim = c(-1, 1))
+abline(v = 0, lty = 2, col = "grey")
+
+dev.off()
+
+# Calculate correlation
+avg_coeff <- rowMeans(out_Q$coeff)
+cor_result <- cor.test(avg_coeff, out_BFI$BFI, method = "spearman")
+print(paste("Spearman correlation coefficient:", round(cor_result$estimate, 3)))
+
+# Partial correlation
+avg_coeff <- rowMeans(out_Q$coeff)
+max_SWE <- apply(out_SWE$SWE, 1, max) 
+partial_cor <- pcor.test(avg_coeff, out_BFI$BFI, max_SWE, method = "spearman")
+cat("Partial Spearman Correlation (controlling for SWE):\n")
+cat("Correlation coefficient:", round(partial_cor$estimate, 3), "\n")

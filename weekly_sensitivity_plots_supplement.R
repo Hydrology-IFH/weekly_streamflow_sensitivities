@@ -161,15 +161,11 @@ dev.off()
 
 
 # example catchments (Figure S3)
-
-pdf(file="D:/R/weekly_streamflow_sensitivities/Figure S3.pdf",width=8, height=10)
-
-#par( mfrow = c(3,3),mar=c(c(3, 4, 1, 1) + 0.1), cex=0.9)
-#par(xaxs = "i", yaxs = "i")
-par(mfrow = c(4,3),
-    mar = c(2.5, 3, 1.5, 0.5),  # Increased top margin slightly
-    oma = c(0.5, 0.5, 0.5, 0),  # Added small outer margin at top
-    mgp = c(2, 0.7, 0),         # Axis label positioning
+pdf(file="D:/R/weekly_streamflow_sensitivities/Figure S3.pdf",width=10, height=7)
+par(mfrow = c(3,4),
+    mar = c(2.5, 3, 1.5, 0.5),
+    oma = c(0.5, 0.5, 0.5, 0),
+    mgp = c(2, 0.7, 0),
     cex = 0.9,
     xaxs = "i", 
     yaxs = "i")
@@ -179,84 +175,95 @@ n1 = 25
 n2 = 10
 n3 = 19
 
-### streamflow
-ylim1 <- c(-0.8,2.6)
-plot(xx,out_Q.p[n1,], typ="l", col=col[(height[n1]-500)*.01], xlab="", ylab = expression("Q [mm/d]"), xaxt = "n", lwd = 2,  xaxs="i", yaxs="i")
-axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
-axis(side = 1, at = xtick, labels = rep("",13))
-abline(0,0)
-
-ylim1 <- c(-0.1,1.0)
-plot(xx,out_Q.p[n2,], typ="l", col=col[(height[n2]-500)*.01], xlab="", ylab = expression("Q [mm/d]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
-axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
-axis(side = 1, at = xtick, labels = rep("",13))
-abline(0,0)
-
+### n3
+# streamflow
 ylim1 <- c(-0.1,1.4)
 plot(xx,out_Q.p[n3,], typ="l", col=col[(height[n3]-500)*.01], xlab="", ylab = expression("Q [mm/d]"), xaxt = "n", lwd = 2,  xaxs="i" )
 axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 abline(0,0)
 
-### temperature sensitivity
-ylim1 <- c(-20,25)
-plot(xx,out_T.coeff[n1,], typ="l", col=col[(height[n1]-500)*.01], xlab="", ylab = expression(b[T]*" [(mm/d)/K]"), xaxt = "n", lwd = 2,  xaxs="i", yaxs="i")
-axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
-axis(side = 1, at = xtick, labels = rep("",13))
-abline(0,0)
-#legend(183,ylim1[2], seq(500,3000,length.out=6),col=col, fill=seq(1,25,length.out=6), horiz=TRUE, title="Elevation [m a.s.l.]", bty="n", xjust=0.5, cex=0.8)
-
-ylim1 <- c(-5,50)
-plot(xx,out_T.coeff[n2,], typ="l", col=col[(height[n2]-500)*.01], xlab="", ylab = expression(b[T]*" [(mm/d)/K]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
-axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
-axis(side = 1, at = xtick, labels = rep("",13))
-abline(0,0)
-
+# temperature sensitivity
 ylim1 <- c(-5,50)
 plot(xx,out_T.coeff[n3,], typ="l", col=col[(height[n3]-500)*.01], xlab="", ylab = expression(b[T]*" [(mm/d)/K]"), xaxt = "n", lwd = 2,  xaxs="i" )
 axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 abline(0,0)
 
-### precipitation sensitivity
-ylim1 <- c(0,1)
-plot(xx,out_P.coeff[n1,], typ="l", col=col[(height[n1]-500)*.01], xlab="", ylab = expression(b[P]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
-axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
-axis(side = 1, at = xtick, labels = rep("",13))
-abline(0,0)
-
-ylim1 <- c(0,1)
-plot(xx,out_P.coeff[n2,], typ="l", col=col[(height[n2]-500)*.01], xlab="", ylab = expression(b[P]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
-axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
-axis(side = 1, at = xtick, labels = rep("",13))
-abline(0,0)
-
+# precipitation sensitivity
 ylim1 <- c(0,1)
 plot(xx,out_P.coeff[n3,], typ="l", col=col[(height[n3]-500)*.01], xlab="", ylab = expression(b[P]*" [-]"), xaxt = "n", lwd = 2,  xaxs="i" )
 axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 abline(0,0)
 
-### storage sensitivity
-ylim1 <- c(0,1)
-plot(xx,out_Q.coeff[n1,], typ="l", col=col[(height[n1]-500)*.01], xlab="", ylab = expression(b[Q]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
-axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
-axis(side = 1, at = xtick, labels = rep("",13))
-abline(0,0)
-
-ylim1 <- c(0,1)
-plot(xx,out_Q.coeff[n2,], typ="l", col=col[(height[n2]-500)*.01], xlab="", ylab = expression(b[Q]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
-axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
-axis(side = 1, at = xtick, labels = rep("",13))
-abline(0,0)
-
+# storage sensitivity
 ylim1 <- c(0,1)
 plot(xx,out_Q.coeff[n3,], typ="l", col=col[(height[n3]-500)*.01], xlab="", ylab = expression(b[Q]*" [-]"), xaxt = "n", lwd = 2,  xaxs="i" )
 axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
 axis(side = 1, at = xtick, labels = rep("",13))
 abline(0,0)
 
-dev.off() 
+### n2
+# streamflow
+ylim1 <- c(-0.1,1.0)
+plot(xx,out_Q.p[n2,], typ="l", col=col[(height[n2]-500)*.01], xlab="", ylab = expression("Q [mm/d]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+abline(0,0)
+
+# temperature sensitivity
+ylim1 <- c(-5,50)
+plot(xx,out_T.coeff[n2,], typ="l", col=col[(height[n2]-500)*.01], xlab="", ylab = expression(b[T]*" [(mm/d)/K]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+abline(0,0)
+
+# precipitation sensitivity
+ylim1 <- c(0,1)
+plot(xx,out_P.coeff[n2,], typ="l", col=col[(height[n2]-500)*.01], xlab="", ylab = expression(b[P]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+abline(0,0)
+
+# storage sensitivity
+ylim1 <- c(0,1)
+plot(xx,out_Q.coeff[n2,], typ="l", col=col[(height[n2]-500)*.01], xlab="", ylab = expression(b[Q]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+abline(0,0)
+
+### n1
+# streamflow
+ylim1 <- c(-0.8,2.6)
+plot(xx,out_Q.p[n1,], typ="l", col=col[(height[n1]-500)*.01], xlab="", ylab = expression("Q [mm/d]"), xaxt = "n", lwd = 2,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+abline(0,0)
+
+# temperature sensitivity
+ylim1 <- c(-20,25)
+plot(xx,out_T.coeff[n1,], typ="l", col=col[(height[n1]-500)*.01], xlab="", ylab = expression(b[T]*" [(mm/d)/K]"), xaxt = "n", lwd = 2,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+abline(0,0)
+
+# precipitation sensitivity
+ylim1 <- c(0,1)
+plot(xx,out_P.coeff[n1,], typ="l", col=col[(height[n1]-500)*.01], xlab="", ylab = expression(b[P]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+abline(0,0)
+
+# storage sensitivity
+ylim1 <- c(0,1)
+plot(xx,out_Q.coeff[n1,], typ="l", col=col[(height[n1]-500)*.01], xlab="", ylab = expression(b[Q]*" [-]"), xaxt = "n", lwd = 2 ,  xaxs="i", yaxs="i")
+axis(side = 1, at = xtick+13, labels = xtlab, lwd.ticks=0)
+axis(side = 1, at = xtick, labels = rep("",13))
+abline(0,0)
+
+dev.off()
+
 
 
 # model for relating glacier cover to elevation
@@ -600,5 +607,47 @@ legend(1,ylim1[2], seq(500,3000,length.out=11),col=col, fill=seq(1,25,length.out
 
 dev.off() 
 
+###
 
+library(sf)
+library(ggplot2)
+library(rnaturalearth)
 
+# Load data
+path <- "D:/R/weekly_streamflow_sensitivities/Abflussdaten/"
+files <- read.csv(paste0(path, "Klima_Abfluss_Vergleich.csv"))
+metadata <- read.csv(paste0(path, "Stationsliste_HydrowebSAM_DE_Juli2023.csv"))
+files <- merge(files, metadata[metadata$Messparameter == "Abfluss", c("Stationsnr.", "X.Koordinate", "Y.Koordinate")], 
+               by.x = "Q_Nr", by.y = "Stationsnr.", all.x = TRUE)
+
+# Remove rows with missing coordinates
+files <- files[!is.na(files$X.Koordinate) & !is.na(files$Y.Koordinate), ]
+
+# Colors
+col <- terrain.colors(30, alpha = 1)
+files$col_index <- pmax(1, pmin(30, round((files$elev_ezg - 500) * 0.01)))
+files$col <- col[files$col_index]
+
+# Convert to sf and transform CRS
+files_sf <- st_as_sf(files, coords = c("X.Koordinate", "Y.Koordinate"), crs = 2056)
+files_sf <- st_transform(files_sf, 4326)
+files_sf$col <- files$col
+
+# Highlighted catchments
+highlight_ids <- c(2126, 2268, 2232)
+highlight_sf <- files_sf[files_sf$Q_Nr %in% highlight_ids, ]
+
+# Switzerland map
+ch <- ne_countries(country = "Switzerland", scale = "medium", returnclass = "sf")
+
+# High-res plot with white highlight circles
+png("D:/R/weekly_streamflow_sensitivities/swiss_stations_map.png", width = 2400, height = 1600, res = 600)
+ggplot() +
+  geom_sf(data = ch, fill = "grey80", color = "white") +
+  # White circle around highlighted points (slightly larger than points)
+  geom_sf(data = files_sf, aes(color = col), size = 2) +
+  geom_sf(data = highlight_sf, color = "white", size = 2.5, shape = 21, fill = NA, stroke = 1.) +
+  # All points
+  scale_color_identity() +
+  theme_minimal()
+dev.off()
